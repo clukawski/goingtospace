@@ -8,7 +8,6 @@ import (
 	"time"
 	"encoding/binary"
 	
-	"github.com/golang/glog"
 	"github.com/kidoman/embd"
 )
 
