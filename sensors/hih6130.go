@@ -6,7 +6,8 @@ import (
 	"math"
 	"sync"
 	"time"
-
+	"encoding/binary"
+	
 	"github.com/golang/glog"
 	"github.com/kidoman/embd"
 )
@@ -25,20 +26,20 @@ type HIH6130 struct {
 
 	cmu sync.RWMutex
 
-	temps  chan uint16
+	temps  chan int
 	humids chan float64
 	quit   chan struct{}
 }
 
 // Init sends the high bit to the sensor and "turns it on"
-func (h *HIH6130) Init() error {
-	err := h.Bus.WriteByte(address, embd.High)
+func (d *HIH6130) Init() error {
+	err := d.Bus.WriteByte(address, embd.High)
 	return err
 }
 
 // Stop sends the low bit to the sensor and turns it off.
-func (h *HIH6130) Stop() error {
-	err := h.Bus.WriteByte(address, embd.Low)
+func (d *HIH6130) Stop() error {
+	err := d.Bus.WriteByte(address, embd.Low)
 	return err
 }
 
@@ -47,9 +48,9 @@ func New(bus embd.I2CBus) *HIH6130 {
 	return &HIH6130{Bus: bus, Poll: pollDelay}
 }
 
-func (h *HIH6130) MeasureHumidAndTemp() (uint16, uint16) {
+func (d *HIH6130) MeasureHumidAndTemp() (int, int) {
 	data := make([]byte, 4)
-	if err := h.Bus.ReadFromReg(address, fakereg, data); err != nil {
+	if err := d.Bus.ReadFromReg(address, fakereg, data); err != nil {
 		return 0, 0, err
 	}
 
@@ -58,39 +59,55 @@ func (h *HIH6130) MeasureHumidAndTemp() (uint16, uint16) {
 	status := uint8(data[0] >> 6)
 	hdata := uint16(data[0] & 0x3f) << 8 | uint16(data[1])
 	tdata := (uint16(data[2]) << 8 | uint16(data[3])) >> 2
+
+	var humid int
+	var temp int
+
+	hbuf := bytes.NewReader([]byte(hdata))
+	tbuf := bytes.NewReader([]byte(tdata))
+
+	err := binary.Read(hbuf, binary.LittleEndian, &humid)
+	if err != nil {
+		return 0, 0, err
+	}
+	err := binary.Read(tbuf, binary.LittleEndian, &temp)
+	if err != nil {
+		return 0, 0, err
+	}
+
+	var h float64
+	var t int
+	
+	h = humid / (math.Pow(2, 14) - 1) * 100
+	t = temp / (math.Pow(2, 14) - 1) * 165 - 40
+
+	return h, t, nil
 }
 
 // Run starts the sensor data acquisition loop.
-func (h *HIH6130) Run() {
+func (d *HIH6130) Run() {
 	go func() {
 		d.quit = make(chan struct{})
 		timer := time.Tick(time.Duration(d.Poll) * time.Millisecond)
 
-		var temp uint16
-		var humid uint16
+		var humid int
+		var temp int
 
 		for {
 			select {
 			case <-timer:
-				t, err := d.measureTemp()
+				h, t, err := d.MeasureHumidAndTemp()
 				if err == nil {
+					humid = h
 					temp = t
 				}
-				if err == nil && d.temps == nil {
-					d.temps = make(chan uint16)
+				if err == nil && d.humids == nil && d.temps == nil {
+					d.humid = make(chan float64)
+					d.temp = make(chan int)
 				}
-				p, a, err := d.measurePressureAndAltitude()
-				if err == nil {
-					pressure = p
-					altitude = a
-				}
-				if err == nil && d.pressures == nil && d.altitudes == nil {
-					d.pressures = make(chan uint16)
-					d.altitudes = make(chan uint16)
-				}
-			case h.temps <- temp:
-			case h.humid <- humidity:
-			case <-h.quit:
+			case d.temps <- temp:
+			case d.humid <- humidity:
+			case <-d.quit:
 				d.temps = nil
 				d.humid = nil
 				return
@@ -103,7 +120,7 @@ func (h *HIH6130) Run() {
 
 // Close.
 func (d *HIH6130) Close() {
-	if h.quit != nil {
-		h.quit <- struct{}{}
+	if d.quit != nil {
+		d.quit <- struct{}{}
 	}
 }
