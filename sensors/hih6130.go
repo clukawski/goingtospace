@@ -47,7 +47,9 @@ func (h *HIH6130) GetData() (uint16, uint16) {
 		return 0, 0, err
 	}
 
-	// Reading 4 bytes of data. First two are humidity data, second two are temperature data (with the last two DNC)
+	// Reading 4 bytes of data. First two are status bits (2) humidity data (6, 8), second two are temperature data (8, 6, with the last two bits DNC)
+
+	status := uint8(data[0] << 6)
 	hdata := uint16(data[0]) << 8 | uint16(data[1])
 	tdata := uint16(data[2]) << 8 | uint16(data[3] >> 2)
 }
