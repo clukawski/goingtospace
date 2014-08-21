@@ -36,12 +36,18 @@ func (h *HIH6130) Init() error {
 	return err
 }
 
+// Stop sends the low bit to the sensor and turns it off.
+func (h *HIH6130) Stop() error {
+	err := h.Bus.WriteByte(address, embd.Low)
+	return err
+}
+
 // New returns a handle to a HIH6130 sensor.
 func New(bus embd.I2CBus) *HIH6130 {
 	return &HIH6130{Bus: bus, Poll: pollDelay}
 }
 
-func (h *HIH6130) GetData() (uint16, uint16) {
+func (h *HIH6130) MeasureHumidAndTemp() (uint16, uint16) {
 	data := make([]byte, 4)
 	if err := h.Bus.ReadFromReg(address, fakereg, data); err != nil {
 		return 0, 0, err
@@ -49,9 +55,9 @@ func (h *HIH6130) GetData() (uint16, uint16) {
 
 	// Reading 4 bytes of data. First two are status bits (2) humidity data (6, 8), second two are temperature data (8, 6, with the last two bits DNC)
 
-	status := uint8(data[0] << 6)
-	hdata := uint16(data[0]) << 8 | uint16(data[1])
-	tdata := uint16(data[2]) << 8 | uint16(data[3] >> 2)
+	status := uint8(data[0] >> 6)
+	hdata := uint16(data[0] & 0x3f) << 8 | uint16(data[1])
+	tdata := (uint16(data[2]) << 8 | uint16(data[3])) >> 2
 }
 
 // Run starts the sensor data acquisition loop.
@@ -79,16 +85,14 @@ func (h *HIH6130) Run() {
 					altitude = a
 				}
 				if err == nil && d.pressures == nil && d.altitudes == nil {
-					d.pressures = make(chan int32)
-					d.altitudes = make(chan float64)
+					d.pressures = make(chan uint16)
+					d.altitudes = make(chan uint16)
 				}
-			case d.temps <- temp:
-			case d.pressures <- pressure:
-			case d.altitudes <- altitude:
-			case <-d.quit:
+			case h.temps <- temp:
+			case h.humid <- humidity:
+			case <-h.quit:
 				d.temps = nil
-				d.pressures = nil
-				d.altitudes = nil
+				d.humid = nil
 				return
 			}
 		}
@@ -99,7 +103,7 @@ func (h *HIH6130) Run() {
 
 // Close.
 func (d *HIH6130) Close() {
-	if d.quit != nil {
-		d.quit <- struct{}{}
+	if h.quit != nil {
+		h.quit <- struct{}{}
 	}
 }
