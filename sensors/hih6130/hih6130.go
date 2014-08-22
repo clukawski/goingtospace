@@ -76,11 +76,14 @@ func (d *HIH6130) MeasureHumidAndTemp() (float64, int, error) {
 	}
 
 	// Reading 4 bytes of data. First two are status bits (2) humidity data (6, 8), second two are temperature data (8, 6, with the last two bits DNC)
-
+	// Doing bit shifts here
+	
 	// status := uint8(data[0] >> 6) don't need this yet
 	hdata := uint16(data[0] & 0x3f) << 8 | uint16(data[1])
 	tdata := (uint16(data[2]) << 8 | uint16(data[3])) >> 2
 
+
+	// conversion from uint16 to float64 
 	var humid float64
 	var temp float64
 
@@ -102,13 +105,14 @@ func (d *HIH6130) MeasureHumidAndTemp() (float64, int, error) {
 		return 0, 0, err
 	}
 
+	// Turn readings into usable data
 	var h float64
 	var t float64
-	
+
 	h = humid / (math.Pow(2, 14) - 1) * 100
 	t = temp / (math.Pow(2, 14) - 1) * 165 - 40
 
-	return h, int(t), nil
+	return h, int(t), nil //cast t as int, as we don't really need decimal places for Celcius temperature readings.
 }
 
 // Run starts the sensor data acquisition loop.
