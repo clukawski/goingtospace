@@ -80,7 +80,7 @@ func (d *HIH6130) MeasureHumidAndTemp() (float64, int, error) {
 
 	// Reading 4 bytes of data. First two are status bits (2) humidity data (6, 8), second two are temperature data (8, 6, with the last two bits DNC)
 
-	status := uint8(data[0] >> 6)
+	// status := uint8(data[0] >> 6) don't need this yet
 	hdata := uint16(data[0] & 0x3f) << 8 | uint16(data[1])
 	tdata := (uint16(data[2]) << 8 | uint16(data[3])) >> 2
 
