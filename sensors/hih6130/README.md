@@ -1,0 +1,1 @@
+An interface package for the Honeywell HIH6130 Humidity/Temperature sensor for embd (http://github.com/kidoman/embd)
