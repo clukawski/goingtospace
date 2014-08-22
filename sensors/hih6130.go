@@ -1,10 +1,9 @@
-// Package bmp180 allows interfacing with Bosch HIH6130 barometric pressure sensor. This sensor
-// has the ability to provided compensated temperature and pressure readings.
+// Package hih6130 allows interfacing with Honewell HIH6130 Humidity/Temperature sensor. This sensor
+// can provide humidity and temperature readings
 package hih6130
 
 import (
 	"math"
-	"sync"
 	"time"
 	"encoding/binary"
 	"bytes"
@@ -19,12 +18,10 @@ const (
 	pollDelay = 500
 )
 
-// HIH6130 represents a Bosch HIH6130 barometric sensor.
+// HIH6130 represents a Honewell HIH6130 Humidity/Temperature sensor.
 type HIH6130 struct {
 	Bus  embd.I2CBus
 	Poll int
-
-	cmu sync.RWMutex
 
 	temps  chan int
 	humids chan float64
