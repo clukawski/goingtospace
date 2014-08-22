@@ -1,0 +1,1 @@
+An interface package for the Freescale Xtrinsic MPL3115A2 Altitude/Pressure sensor for embd (http://github.com/kidoman/embd)
