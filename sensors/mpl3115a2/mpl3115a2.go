@@ -23,9 +23,9 @@ type MPL3115A2 struct {
 	Bus  embd.I2CBus
 	Poll int
 
-	temps  chan int
-	humids chan float64
-	quit   chan struct{}
+	altitudes chan int
+	pressures chan int
+	quit      chan struct{}
 }
 
 // Init sends the high bit to the sensor and "turns it on"
@@ -69,6 +69,21 @@ func New(bus embd.I2CBus) *MPL3115A2 {
 	return &MPL3115A2{Bus: bus, Poll: pollDelay}
 }
 
+func (d *MPL3115A2) MeasureAltAndPress() (int, int, error) {
+	data := make([]bype, 4)
+	if err := d.Bus.ReadFromReg(address, fakereg, data); err != nil {
+		return 0, 0, err
+	}
+
+	// Read data. Do bit manipulation.
+	// ...
+	//
+
+	return 0, 0, nil;
+}
+
+
+// NOTE: to remove...
 func (d *MPL3115A2) MeasureHumidAndTemp() (float64, int, error) {
 	data := make([]byte, 4)
 	if err := d.Bus.ReadFromReg(address, fakereg, data); err != nil {
@@ -121,26 +136,26 @@ func (d *MPL3115A2) Run() {
 		d.quit = make(chan struct{})
 		timer := time.Tick(time.Duration(d.Poll) * time.Millisecond)
 
-		var humid float64
-		var temp int
+		var altitude int
+		var pressure int
 
 		for {
 			select {
 			case <-timer:
-				h, t, err := d.MeasureHumidAndTemp()
+				a, p, err := d.MeasureAltAndPress()
 				if err == nil {
-					humid = h
-					temp = t
+					altitude = a
+					pressure = p
 				}
-				if err == nil && d.humids == nil && d.temps == nil {
-					d.humids = make(chan float64)
-					d.temps = make(chan int)
+				if err == nil && d.altitudes == nil && d.pressures == nil {
+					d.altitudes = make(chan int)
+					d.pressures = make(chan int)
 				}
-			case d.temps <- temp:
-			case d.humids <- humid:
-			case <-d.quit:
-				d.temps = nil
-				d.humids = nil
+			case d.altitudes <- altitude:
+			case d.pressures <- pressure:
+			case <- d.quit:
+				d.altitudes = nil
+				d.pressures = nil
 				return
 			}
 		}
