@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	address = 0x27
+	address = 0xC0
 	fakereg = 0x00
 
 	pollDelay = 500
