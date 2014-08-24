@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	address = 0xC0
+	address = 0x60
 	fakereg = 0x00
 
 	pollDelay = 500
@@ -70,7 +70,7 @@ func New(bus embd.I2CBus) *MPL3115A2 {
 }
 
 func (d *MPL3115A2) MeasureAltAndPress() (int, int, error) {
-	data := make([]bype, 4)
+	data := make([]byte, 4)
 	if err := d.Bus.ReadFromReg(address, fakereg, data); err != nil {
 		return 0, 0, err
 	}
