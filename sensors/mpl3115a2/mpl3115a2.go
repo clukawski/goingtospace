@@ -3,10 +3,10 @@
 package mpl3115a2
 
 import (
+	"bytes"
+	"encoding/binary"
 	"math"
 	"time"
-	"encoding/binary"
-	"bytes"
 
 	"github.com/kidoman/embd"
 )
@@ -79,9 +79,8 @@ func (d *MPL3115A2) MeasureAltAndPress() (int, int, error) {
 	// ...
 	//
 
-	return 0, 0, nil;
+	return 0, 0, nil
 }
-
 
 // NOTE: Remove this after the above function is written
 // func (d *MPL3115A2) MeasureHumidAndTemp() (float64, int, error) {
@@ -153,7 +152,7 @@ func (d *MPL3115A2) Run() {
 				}
 			case d.altitudes <- altitude:
 			case d.pressures <- pressure:
-			case <- d.quit:
+			case <-d.quit:
 				d.altitudes = nil
 				d.pressures = nil
 				return
