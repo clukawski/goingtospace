@@ -17,6 +17,8 @@ func main() {
 	}
 	defer logfile.Close()
 
+	log.Print("Logging to logfile.log")
+
 	logger := log.New(logfile, "", log.LstdFlags|log.Lmicroseconds)
 
 	bus := embd.NewI2CBus(1)
