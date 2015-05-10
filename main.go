@@ -5,6 +5,7 @@ import (
 	_ "github.com/kidoman/embd/host/all"
 	"github.com/kidoman/embd/sensor/bh1750fvi"
 	"github.com/kidoman/embd/sensor/bmp180"
+	"github.com/kidoman/embd/sensor/lsm303"
 	"log"
 	"os"
 	"time"
