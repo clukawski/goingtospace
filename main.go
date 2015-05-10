@@ -51,9 +51,9 @@ func logBMP180(bus embd.I2CBus) {
 	ticker := time.Tick(time.Second)
 
 	for range ticker {
-		temperature := sensor.Temperature()
-		pressure := sensor.Pressure()
-		altitute := sensor.Altitude()
+		temperature, _ := sensor.Temperature()
+		pressure, _ := sensor.Pressure()
+		altitude, _ := sensor.Altitude()
 		logger.Print("temperature:", temperature, " pressure:", pressure, " altitude:", altitude)
 	}
 }
