@@ -5,6 +5,7 @@ import (
 	_ "github.com/kidoman/embd/host/all"
 	"github.com/kidoman/embd/sensor/bh1750fvi"
 	"github.com/kidoman/embd/sensor/bmp180"
+	"github.com/kidoman/embd/sensor/l3gd20"
 	"github.com/kidoman/embd/sensor/lsm303"
 	"log"
 	"os"
@@ -29,6 +30,7 @@ func main() {
 	go logBH1750FVI(bus) // luminosity
 	go logBMP180(bus)    // barometric pressure; temperature; altitude
 	go logLSM303(bus)    // magnetometer
+	go logL3GD20(bus)    // gyroscope; temperature
 
 	// sleep forever
 	select {}
@@ -53,6 +55,20 @@ func logBMP180(bus embd.I2CBus) {
 		pressure, _ := sensor.Pressure()
 		altitude, _ := sensor.Altitude()
 		logger.Print("temperature:", temperature, " pressure:", pressure, " altitude:", altitude)
+	}
+}
+
+func logL3GD20(bus embd.I2CBus) {
+	// NOTE: I picked this range at random.
+	sensor := l3gd20.New(bus, l3gd20.R500DPS)
+	sensor.Start()
+
+	orientations, _ := sensor.Orientations()
+
+	for range time.Tick(time.Second) {
+		o := <-orientations
+		t, _ := sensor.Temperature()
+		logger.Print("orientation:{x:", o.X, " y:", o.Y, " z:", o.Z, "} temperature:", t)
 	}
 }
 
