@@ -9,15 +9,18 @@ import (
 	"time"
 )
 
-func main() {
+var logger *log.Logger
+func init(){
 	logfile, err := os.Create("logfile.log")
 	if err != nil {
 		return
 	}
-	defer logfile.Close()
 	log.Print("Logging to logfile.log")
-	logger := log.New(logfile, "", log.LstdFlags|log.Lmicroseconds)
+	logger = log.New(logfile, "", log.LstdFlags|log.Lmicroseconds)
+	// defer logfile.Close()
+}
 
+func main() {
 	bus := embd.NewI2CBus(1)
 
 	light := bh1750fvi.New("High2", bus)
