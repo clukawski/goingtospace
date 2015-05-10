@@ -24,13 +24,20 @@ func init() {
 func main() {
 	bus := embd.NewI2CBus(1)
 
-	light := bh1750fvi.New("High2", bus)
-	light.Run()
+	go logLight(bus)
+
+	// sleep forever
+	select {}
+}
+
+func logLight(bus embd.I2CBus) {
+	sensor := bh1750fvi.New("High2", bus)
+	sensor.Run()
 
 	ticker := time.Tick(time.Second)
 
 	for range ticker {
-		current, _ := light.Lighting()
-		logger.Print("light:", current)
+		lighting, _ := sensor.Lighting()
+		logger.Print("lighting:", lighting)
 	}
 }
