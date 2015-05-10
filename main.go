@@ -10,7 +10,8 @@ import (
 )
 
 var logger *log.Logger
-func init(){
+
+func init() {
 	logfile, err := os.Create("logfile.log")
 	if err != nil {
 		return
