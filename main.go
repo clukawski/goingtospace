@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	// "fmt"
 	"github.com/kidoman/embd"
 	_ "github.com/kidoman/embd/host/all"
 	"github.com/kidoman/embd/sensor/bh1750fvi"
@@ -17,7 +17,7 @@ func main() {
 	}
 	defer logfile.Close()
 
-	logger := log.New(logfile, "", log.LstdFlags|log.microseconds)
+	logger := log.New(logfile, "", log.LstdFlags|log.Lmicroseconds)
 
 	bus := embd.NewI2CBus(1)
 
