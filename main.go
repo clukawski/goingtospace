@@ -24,13 +24,14 @@ func init() {
 func main() {
 	bus := embd.NewI2CBus(1)
 
-	go logLight(bus)
+	go logBH1750FVI(bus) // luminosity
+	go logBMP180(bus)    // barometric pressure; temperature; altitude
 
 	// sleep forever
 	select {}
 }
 
-func logLight(bus embd.I2CBus) {
+func logBH1750FVI(bus embd.I2CBus) {
 	sensor := bh1750fvi.New("High2", bus)
 	sensor.Run()
 
@@ -39,5 +40,19 @@ func logLight(bus embd.I2CBus) {
 	for range ticker {
 		lighting, _ := sensor.Lighting()
 		logger.Print("lighting:", lighting)
+	}
+}
+
+func logBMP180(bus embd.I2CBus) {
+	sensor := bmp180.New(bus)
+	sensor.Run()
+
+	ticker := time.Tick(time.Second)
+
+	for range ticker {
+		temperature := sensor.Temperature()
+		pressure := sensor.Pressure()
+		altitute := sensor.Altitude()
+		logger.Print("temperature:", temperature, " pressure:", pressure, " altitude:", altitude)
 	}
 }
