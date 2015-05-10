@@ -61,7 +61,7 @@ func logLSM303(bus embd.I2CBus) {
 	sensor.Run()
 
 	for range time.Tick(time.Second) {
-		heading := sensor.Heading()
+		heading, _ := sensor.Heading()
 		logger.Print("heading:", heading)
 	}
 }
