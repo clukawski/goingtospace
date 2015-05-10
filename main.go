@@ -36,9 +36,7 @@ func logBH1750FVI(bus embd.I2CBus) {
 	sensor := bh1750fvi.New("High2", bus)
 	sensor.Run()
 
-	ticker := time.Tick(time.Second)
-
-	for range ticker {
+	for range time.Tick(time.Second) {
 		lighting, _ := sensor.Lighting()
 		logger.Print("lighting:", lighting)
 	}
@@ -48,9 +46,7 @@ func logBMP180(bus embd.I2CBus) {
 	sensor := bmp180.New(bus)
 	sensor.Run()
 
-	ticker := time.Tick(time.Second)
-
-	for range ticker {
+	for range time.Tick(time.Second) {
 		temperature, _ := sensor.Temperature()
 		pressure, _ := sensor.Pressure()
 		altitude, _ := sensor.Altitude()
