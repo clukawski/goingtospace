@@ -27,6 +27,7 @@ func main() {
 
 	go logBH1750FVI(bus) // luminosity
 	go logBMP180(bus)    // barometric pressure; temperature; altitude
+	go logLSM303(bus)    // magnetometer
 
 	// sleep forever
 	select {}
@@ -51,5 +52,15 @@ func logBMP180(bus embd.I2CBus) {
 		pressure, _ := sensor.Pressure()
 		altitude, _ := sensor.Altitude()
 		logger.Print("temperature:", temperature, " pressure:", pressure, " altitude:", altitude)
+	}
+}
+
+func logLSM303(bus embd.I2CBus) {
+	sensor := lsm303.New(bus)
+	sensor.Run()
+
+	for range time.Tick(time.Second) {
+		heading := sensor.Heading()
+		logger.Print("heading:", heading)
 	}
 }
