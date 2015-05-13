@@ -1,0 +1,10 @@
+* Hardware
+* Software
+** Interfaces
+** Sensors
+*** LSM303
+**** TODO Check magnetometer axes ordering
+     There are at least two versions of this sensor, and the registers are in different orders
+     One has X,Y,Z; the other has X,Z,Y
+* Other
+  If this file becomes unmanageable, we'll consider [[http://orgmode.org/worg/org-contrib/gsoc2012/student-projects/org-sync/][org-sync]]
