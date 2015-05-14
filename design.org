@@ -1,10 +1,35 @@
+:PROPERTIES:
+#+TODO: TODO DOING | DONE
+:END:
 * Hardware
 * Software
 ** Interfaces
+*** TODO UART interface
+    See [[http://en.wikipedia.org/wiki/Universal_asynchronous_receiver/transmitter][Wikipedia]]
 ** Sensors
-*** LSM303
+*** LSM303 - Accelerometer and Magnetometer
 **** TODO Check magnetometer axes ordering
      There are at least two versions of this sensor, and the registers are in different orders
      One has X,Y,Z; the other has X,Z,Y
+**** DOING Measure 3D magnetization vector
+**** TODO Accelerometer interface
+*** L3GD20 - Gyroscope
+    Also measures temperature for some reason
+*** BMP180 - Barometer
+    Measures pressure and temperature. also calculates altitude
+*** BH1750FVI - Light sensor
+    Measures ambient light
+** GPS
+   [[http://www.adafruit.com/product/746][Adafruit Ultimate GPS]]?
+** Comms
+   [[https://www.sparkfun.com/products/9411][XTend module]]?
 * Other
   If this file becomes unmanageable, we'll consider [[http://orgmode.org/worg/org-contrib/gsoc2012/student-projects/org-sync/][org-sync]]
+** TODO Legal issues
+   Who do we need to notify?
+* Local Variables
+  Emacs will complain about this.
+  Feel free to get rid of them - maybe put this in your .emacs config.
+# Local Variables:
+# eval: (setq org-todo-keyword-faces '(("TODO" . "red") ("DOING" . "yellow") ("DONE" . "green")));
+# End:
