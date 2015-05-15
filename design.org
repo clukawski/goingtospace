@@ -26,7 +26,13 @@
 * Other
   If this file becomes unmanageable, we'll consider [[http://orgmode.org/worg/org-contrib/gsoc2012/student-projects/org-sync/][org-sync]]
 ** TODO Legal issues
-   Who do we need to notify?
+   Send NOTAM to nearby airports in advance of launch,
+   but under 115 cu ft ballon capacity there is little
+   regulation. With a parachute, payload weight is a 
+   non-issue provided the parachute is designed to 
+   slow the payload descent to < 3.5 m/s.
+
+   This [[http://www.arawr.ca/?page=legal][page]] has a good example and more information.
 * Local Variables
   Emacs will complain about this.
   Feel free to get rid of them - maybe put this in your .emacs config.
