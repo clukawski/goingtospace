@@ -8,11 +8,12 @@
     See [[http://en.wikipedia.org/wiki/Universal_asynchronous_receiver/transmitter][Wikipedia]]
 ** Sensors
 *** LSM303 - Accelerometer and Magnetometer
+    [[https://www.sparkfun.com/datasheets/Sensors/Magneto/LSM303%2520Datasheet.pdf][Datasheet]]
 **** TODO Check magnetometer axes ordering
      There are at least two versions of this sensor, and the registers are in different orders
      One has X,Y,Z; the other has X,Z,Y
 **** DOING Measure 3D magnetization vector
-**** TODO Accelerometer interface
+**** DOING Accelerometer interface
 *** L3GD20 - Gyroscope
     Also measures temperature for some reason
 *** BMP180 - Barometer
