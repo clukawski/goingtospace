@@ -24,6 +24,29 @@
    [[http://www.adafruit.com/product/746][Adafruit Ultimate GPS]]
 ** Comms
    [[https://www.sparkfun.com/products/9411][XTend module]]?
+** Logging
+   Need to decide on a logging format
+*** JSON
+    How about something like this:
+    {
+      "Timestamp":"2015/05/25 17:15:41.301530"
+      "Type":"Data",
+      "Source":"BMP180"
+      "Data":{
+        "Temperature":0
+        "Pressure":0
+        "Altitude":0
+      }
+    }
+    This allows the program parsing the data to use a single struct to parse anything:
+    struct {
+      Timestamp string
+      Type      string
+      Source    string
+      Data      byte[]
+    }
+    And then you can parse Data if and only if it's the type of data you're interested in.
+    So it'll be easy to write a program to, for example, make a graph of pressure vs altitude, even when you have all sorts of data in one file.
 * Other
   If this file becomes unmanageable, we'll consider [[http://orgmode.org/worg/org-contrib/gsoc2012/student-projects/org-sync/][org-sync]]
 ** TODO Legal issues
